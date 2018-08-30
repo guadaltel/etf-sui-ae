@@ -38,6 +38,11 @@ public class Layer implements TransferableRequestParameter {
 	private String[] styleNames;
 	private List <Bbox> bBoxes;
 	private List <Layer> subLayers;
+	private String abstract_;
+	private String[] CRSArray;
+	private EX_GeographicBoundingBox EX_GeographicBoundingBox;
+	private List <BoundingBox> boundingBoxList;
+	private Style style;
 	
 	public Layer() { }
 	
@@ -57,9 +62,23 @@ public class Layer implements TransferableRequestParameter {
 		
 		name=layerXml.getNodeValue("/*:Layer/*:Name");
 		
+		abstract_ = layerXml.getNodeValue("/*:Layer/*:Abstract")
+		
+		String styleString = layerXml.getNodeValues("/*:Layer/*:Style");
+		
+		XmlHolder styleXml = new XmlHolder(styleString);
+		
+		Style style = new Style(styleXml);
+		
 		styleNames=layerXml.getNodeValues("/*:Layer/*:Style/*:Name");
+		
+		CRSArray=layerXml.getNodeValues("/*:Layer/*:CRS");
 
+		
+		
 		bBoxes = new ArrayList<Bbox>();
+		
+		boundingBoxList = new ArrayList<BoundingBox>();
 		
 		// LatLonBoundingBox		
 		Bbox latLonBbox=null;
@@ -75,6 +94,7 @@ public class Layer implements TransferableRequestParameter {
 			double maxx = Double.valueOf(layerXml.getNodeValue("/*:Layer/*:EX_GeographicBoundingBox/*:eastBoundLongitude"));
 			double maxy = Double.valueOf(layerXml.getNodeValue("/*:Layer/*:EX_GeographicBoundingBox/*:northBoundLatitude"));
 			latLonBbox=new Bbox(minx,miny,maxx,maxy, 4326);
+			
 		}
 		if(latLonBbox!=null) {
 			latLonBbox.setMaxBbox(new Bbox(latLonBbox));
@@ -203,5 +223,25 @@ public class Layer implements TransferableRequestParameter {
 		ph.setTransferProperty(
 			"LAYER.NAME", this.name
 		);
+	}
+	
+	public String getAbastract() {
+		return abstract_;
+	}
+
+	public String[] getCRSArray() {
+		return CRSArray;
+	}
+
+	public EX_GeographicBoundingBox getEX_GeographicBoundingBox() {
+		return EX_GeographicBoundingBox;
+	}
+
+	public BoundingBox[] getBoundingBoxArray() {
+		return boundingBoxArray;
+	}
+
+	public Style getStyle() {
+		return style;
 	}
 }
